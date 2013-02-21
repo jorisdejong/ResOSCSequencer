@@ -30,14 +30,28 @@ void testApp::setup(){
     }
     
     metronome = 10;
+    beats = 0;
+    bpm = 180;
+    beatMillis = ofGetElapsedTimeMillis();
+
 
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    metronome+=1;
+        
+    //calculate time of one beat in millis
+    float oneBeat = 60/bpm * 1000;
+    if(ofGetElapsedTimeMillis() - beatMillis > oneBeat)
+    {
+        beatMillis = ofGetElapsedTimeMillis();
+        metronome+=(cellWidth+10)/4.0;
+        beats++;
+    }
     
-    if(metronome>rowLength*(cellWidth+10)+10)
+    
+    
+    if(metronome>rowLength*(cellWidth+10))
     {
         metronome = 10;
         for(int i = 0; i < cells.size(); i++)
@@ -66,6 +80,13 @@ void testApp::update(){
         
         if(receivedMessage.getAddress() == "/playbackcontroller/bpm")
             bpm = receivedMessage.getArgAsFloat(0)*498+2;
+        if(receivedMessage.getAddress() == "/playbackcontroller/resync")
+        {
+            beats=0;
+            metronome = 10;
+            beatMillis = ofGetElapsedTimeMillis();
+        }
+        
     }
     
     
@@ -82,8 +103,15 @@ void testApp::draw(){
     ofSetColor(0);
     ofLine(metronome,0,metronome,ofGetHeight());
     
-    cout << bpm << endl;
-
+    ofFill();
+    ofRect((rowLength-1)*(cellWidth+10)+10,ofGetHeight()/2+cellWidth+10,cellWidth,cellWidth);
+    ofPushMatrix();
+    ofTranslate((rowLength-1)*(cellWidth+10)+10+cellWidth/2,ofGetHeight()/2+cellWidth+10+cellWidth/2);
+    ofRotate(180+beats%4*90, 0, 0, 1);
+    ofSetColor(255);
+    ofRectRounded(0,0,cellWidth/2-1,cellWidth/2-1,2);
+    ofPopMatrix();
+    
 }
 
 //--------------------------------------------------------------

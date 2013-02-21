@@ -25,8 +25,10 @@ class testApp : public ofBaseApp{
     int cellWidth;
     int rowLength;
     
-    int metronome;
-    int bpm;
+    float metronome;
+    float bpm;
+    int beats;
+    int beatMillis;
     
     int mouseStartX;
     int mouseStartY;
