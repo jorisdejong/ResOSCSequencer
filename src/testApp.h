@@ -27,11 +27,14 @@ class testApp : public ofBaseApp{
     
     float metronome;
     float bpm;
-    int beats;
-    int beatMillis;
+    int currentBeat;
+    int numberOfBeats;
+    float syncTimeMillis;
     
     int mouseStartX;
     int mouseStartY;
+    
+    bool triggerSingleColumn;
     
     ofxOscMessage m;
     ofxOscSender sender;

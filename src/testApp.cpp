@@ -1,8 +1,9 @@
 #include "testApp.h"
 
+
 //--------------------------------------------------------------
 void testApp::setup(){
-    ofSetFrameRate(60);
+    //ofSetFrameRate(60);
     ofSetVerticalSync(true);
     ofEnableSmoothing();
     
@@ -10,9 +11,10 @@ void testApp::setup(){
     receiver.setup(7001);
     
     //create cellgrid;
-    cellNum = 24;
+    //cellNum = 24;
     cellWidth = 40;
-    rowLength = 8;
+    rowLength = 16;
+    cellNum = 3 * rowLength;
     int x = 0;
     int y = 0;
     for(int i = 0; i < cellNum; i++)
@@ -30,9 +32,11 @@ void testApp::setup(){
     }
     
     metronome = 10;
-    beats = 0;
-    bpm = 180;
-    beatMillis = ofGetElapsedTimeMillis();
+    currentBeat = 0;
+    bpm = 120;
+    
+    
+    triggerSingleColumn = true;
 
 
 }
@@ -41,28 +45,39 @@ void testApp::setup(){
 void testApp::update(){
         
     //calculate time of one beat in millis
-    float oneBeat = 60/bpm * 1000;
-    if(ofGetElapsedTimeMillis() - beatMillis > oneBeat)
+    float oneBeat = 60000.0/bpm;
+    
+    //calculate the number of elapsed beats, and calculate metronome position based on that...
+    numberOfBeats = ( ofGetElapsedTimeMillis() - syncTimeMillis ) / oneBeat;
+    currentBeat = numberOfBeats % 4;
+    metronome = (numberOfBeats % rowLength)* (cellWidth + 10) + 10;
+    
+
+    
+    
+    
+    //if the metronome has reached the end
+    if(metronome > rowLength*(cellWidth+10))
     {
-        beatMillis = ofGetElapsedTimeMillis();
-        metronome+=(cellWidth+10)/4.0;
-        beats++;
-    }
-    
-    
-    
-    if(metronome>rowLength*(cellWidth+10))
-    {
+        //reset the metronome to the start
         metronome = 10;
+        
+        //arm all the cells
         for(int i = 0; i < cells.size(); i++)
             cells[i].hasTriggered = false;
     }
     
+    //check if the metronome has triggered an event
     for(int i = 0; i < cells.size(); i++)
     {
-        if (metronome>cells[i].pos.x && cells[i].hasTriggered == false)
+        if (metronome >= cells[i].pos.x && cells[i].hasTriggered == false)
         {
-            string message = cells[i].trigger();
+            string message;
+            if(!triggerSingleColumn)
+                message = cells[i].triggerAll();
+            else
+                message = cells[i].triggerOne();
+            
             if(message != "")
             {
                 m.setAddress(message);
@@ -73,18 +88,19 @@ void testApp::update(){
         
     }
     
+    //check for incoming OSC messages
     while(receiver.hasWaitingMessages())
     {
         ofxOscMessage receivedMessage;
         receiver.getNextMessage(&receivedMessage);
         
         if(receivedMessage.getAddress() == "/playbackcontroller/bpm")
-            bpm = receivedMessage.getArgAsFloat(0)*498+2;
+            bpm = receivedMessage.getArgAsFloat(0)*498 + 2;  //translate to 2-500
+        
         if(receivedMessage.getAddress() == "/playbackcontroller/resync")
         {
-            beats=0;
             metronome = 10;
-            beatMillis = ofGetElapsedTimeMillis();
+            syncTimeMillis = ofGetElapsedTimeMillis();
         }
         
     }
@@ -107,10 +123,13 @@ void testApp::draw(){
     ofRect((rowLength-1)*(cellWidth+10)+10,ofGetHeight()/2+cellWidth+10,cellWidth,cellWidth);
     ofPushMatrix();
     ofTranslate((rowLength-1)*(cellWidth+10)+10+cellWidth/2,ofGetHeight()/2+cellWidth+10+cellWidth/2);
-    ofRotate(180+beats%4*90, 0, 0, 1);
+    ofRotate(180+currentBeat%4*90, 0, 0, 1);
     ofSetColor(255);
     ofRectRounded(0,0,cellWidth/2-1,cellWidth/2-1,2);
     ofPopMatrix();
+    
+    ofDrawBitmapString(ofToString(bpm), 10,10);
+
     
 }
 

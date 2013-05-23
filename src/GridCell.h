@@ -27,6 +27,8 @@ public:
     
     bool hasTriggered;
     
+    bool triggerColumnMode;
+    
     //constructor
     GridCell(ofVec2f pos, int w, int x, int y);
     
@@ -35,7 +37,8 @@ public:
     
     //meth
     void setup();
-    string trigger();
+    string triggerAll();
+    string triggerOne();
     void draw();
     void mouseOver(float x, float y, int mode);
 };
