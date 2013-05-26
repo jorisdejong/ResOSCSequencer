@@ -14,6 +14,8 @@ GridCell::GridCell(ofVec2f pos_, int w_, int x, int y)
 {
     pos = pos_;
     w = w_;
+    centerPos.x=pos.x+w/2;
+    centerPos.y=pos.y+w/2;
     clip = x;
     layer = y;
     mode = 0;
@@ -37,10 +39,10 @@ void GridCell::draw()
         case 1:
             ofSetColor(255);
             ofFill();
-            ofEllipse(pos.x+w/2, pos.y+w/2,w, w);
+            ofEllipse(centerPos,w, w);
             ofNoFill();
             ofSetColor(0);
-            ofEllipse(pos.x+w/2, pos.y+w/2, w, w);
+            ofEllipse(centerPos, w, w);
             break;
         case 2:
             ofSetColor(255,0,0);
@@ -51,40 +53,24 @@ void GridCell::draw()
             ofRectRounded(pos, w, w, 10);
             break;
     }
+    
+    if ( targetMode )
+    {
+        ofSetColor(255,128,0,128);
+        ofFill();
+        ofEllipse(centerPos, 100, 100);
+    }
+        
 
 
 }
 
-string GridCell::triggerAll()
-{
 
+string GridCell::trigger()
+{
+    
     //string message = "/layer"+ofToString(layer+1)+"/clip1/connect";
     string message = "/layer"+ofToString(layer+1)+"/clip"+ofToString(clip+1)+"/connect";
-        
-    hasTriggered = true;
-    switch(mode)
-    {
-        case 0:
-            return "";
-            break;
-        
-        case 1:
-            return message;
-            cout << "start " + message << endl;
-            break;        
-        
-        case 2:
-            cout << "eject " + ofToString(layer+1) <<endl;
-            return "";
-            break;
-    }
-}
-
-string GridCell::triggerOne()
-{
-    
-    string message = "/layer"+ofToString(layer+1)+"/clip1/connect";
-    //string message = "/layer"+ofToString(layer+1)+"/clip"+ofToString(clip+1)+"/connect";
     
     hasTriggered = true;
     switch(mode)
@@ -94,24 +80,26 @@ string GridCell::triggerOne()
             break;
             
         case 1:
-            return message;
             cout << "start " + message << endl;
+            return message;
             break;        
             
         case 2:
             cout << "eject " + ofToString(layer+1) <<endl;
             return "";
             break;
+            
+        default:
+            cout << "defaulted" << endl;
+            break;
     }
 }
 
-void GridCell::mouseOver(float x, float y, int mode_)
+bool GridCell::mouseOver(float x, float y)
 {
     if(x > pos.x && x < pos.x + w && y > pos.y && y < pos.y + w)
-    {
-        if (mode == 0) 
-            mode = mode_;
-        else
-            mode = 0;
-    }
+        return true;
+    else
+        return false;
 }
+

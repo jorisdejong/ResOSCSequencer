@@ -30,16 +30,18 @@ class testApp : public ofBaseApp{
     int currentBeat;
     int numberOfBeats;
     float syncTimeMillis;
+    float lastBpmChangeMillis;
     
     int mouseStartX;
     int mouseStartY;
-    
-    bool triggerSingleColumn;
+    float mouseStartMillis;
     
     ofxOscMessage m;
     ofxOscSender sender;
-    
     ofxOscReceiver receiver;
+    
+    bool targetMode;
+    int getTarget(ofVec2f pos);
     
 
 };

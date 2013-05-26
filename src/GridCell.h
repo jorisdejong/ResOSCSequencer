@@ -20,14 +20,13 @@ public:
     //vars
     int mode;
     ofVec2f pos;
+    ofVec2f centerPos;
     int w;
     
     int clip;
     int layer;
     
     bool hasTriggered;
-    
-    bool triggerColumnMode;
     
     //constructor
     GridCell(ofVec2f pos, int w, int x, int y);
@@ -37,10 +36,10 @@ public:
     
     //meth
     void setup();
-    string triggerAll();
-    string triggerOne();
+    string trigger();
     void draw();
-    void mouseOver(float x, float y, int mode);
+    bool mouseOver(float x, float y);
+    bool targetMode;
 };
 
 #endif

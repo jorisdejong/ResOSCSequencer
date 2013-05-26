@@ -3,15 +3,16 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    //ofSetFrameRate(60);
+    ofSetFrameRate(60);
     ofSetVerticalSync(true);
     ofEnableSmoothing();
+    ofEnableAlphaBlending();
     
+    //OSC setup
     sender.setup("localhost", 7000);
     receiver.setup(7001);
     
     //create cellgrid;
-    //cellNum = 24;
     cellWidth = 40;
     rowLength = 16;
     cellNum = 3 * rowLength;
@@ -35,10 +36,6 @@ void testApp::setup(){
     currentBeat = 0;
     bpm = 120;
     
-    
-    triggerSingleColumn = true;
-
-
 }
 
 //--------------------------------------------------------------
@@ -48,21 +45,16 @@ void testApp::update(){
     float oneBeat = 60000.0/bpm;
     
     //calculate the number of elapsed beats, and calculate metronome position based on that...
+    //todo: figure out a way of calculating the current beat correctly after a bpm change
+    
     numberOfBeats = ( ofGetElapsedTimeMillis() - syncTimeMillis ) / oneBeat;
     currentBeat = numberOfBeats % 4;
-    metronome = (numberOfBeats % rowLength)* (cellWidth + 10) + 10;
+    metronome = (numberOfBeats % rowLength) * (cellWidth + 10) + 10;
     
-
-    
-    
-    
-    //if the metronome has reached the end
-    if(metronome > rowLength*(cellWidth+10))
+    //if we've gone a full loop of the sequencer
+    if(numberOfBeats % rowLength == 0)
     {
-        //reset the metronome to the start
-        metronome = 10;
-        
-        //arm all the cells
+        //re-arm all the cells
         for(int i = 0; i < cells.size(); i++)
             cells[i].hasTriggered = false;
     }
@@ -73,11 +65,8 @@ void testApp::update(){
         if (metronome >= cells[i].pos.x && cells[i].hasTriggered == false)
         {
             string message;
-            if(!triggerSingleColumn)
-                message = cells[i].triggerAll();
-            else
-                message = cells[i].triggerOne();
-            
+            message = cells[i].trigger();
+
             if(message != "")
             {
                 m.setAddress(message);
@@ -95,12 +84,16 @@ void testApp::update(){
         receiver.getNextMessage(&receivedMessage);
         
         if(receivedMessage.getAddress() == "/playbackcontroller/bpm")
+        {
             bpm = receivedMessage.getArgAsFloat(0)*498 + 2;  //translate to 2-500
+            //lastBpmChangeMillis = ofGetElapsedTimeMillis();
+        }
         
         if(receivedMessage.getAddress() == "/playbackcontroller/resync")
         {
             metronome = 10;
             syncTimeMillis = ofGetElapsedTimeMillis();
+            //lastBpmChangeMillis = 0;
         }
         
     }
@@ -157,24 +150,52 @@ void testApp::mouseDragged(int x, int y, int button){
 void testApp::mousePressed(int x, int y, int button){
     mouseStartX = x;
     mouseStartY = y;
+    mouseStartMillis = ofGetElapsedTimeMillis();
 
 
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
+    float mouseEndMillis = ofGetElapsedTimeMillis();
+    
     for(int i = 0; i < cells.size(); i++)
     {
-        cells[i].mouseOver(mouseStartX, mouseStartY, 1);
-    }
-    
-    if(abs(mouseStartX - x) > cellWidth + 10)
-    {
-        for(int i = 0; i < cells.size(); i++)
+        if(cells[i].targetMode)
         {
-            cells[i].mouseOver(x,y,2);
+            ofVec2f mouseRelease(x,y);
+            float angle = cells[i].centerPos.angle(mouseRelease);
+            cells[i].targetMode = false;
+            cout<<angle<<endl;
+        }
+        
+        else
+    
+        {
+            if( mouseEndMillis - mouseStartMillis > 1000)
+            {
+                if(cells[i].mouseOver(mouseStartX, mouseStartY))
+                {
+                    cells[i].targetMode = true;
+                }
+
+            }
+        
+    
+            if(cells[i].mouseOver(mouseStartX, mouseStartY))
+            {
+                if (cells[i].mode == 0) 
+                {
+                    cells[i].mode = 1;
+                }
+                else
+                    cells[i].mode = 0;
+            }
         }
     }
+    
+    //else
+    
 
 }
 
