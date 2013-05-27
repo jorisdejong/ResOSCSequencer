@@ -38,8 +38,15 @@ public:
     void setup();
     string trigger();
     void draw();
-    bool mouseOver(float x, float y);
+    
+    bool mouseOver(ofVec2f posRelease);
+    
     bool targetMode;
+    float targetModeAngle;
+    int targetClip;
+    int targetClipNew;
+    
+    ofVec2f currMouse;
 };
 
 #endif

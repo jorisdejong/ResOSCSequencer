@@ -19,7 +19,9 @@ GridCell::GridCell(ofVec2f pos_, int w_, int x, int y)
     clip = x;
     layer = y;
     mode = 0;
-    hasTriggered = false;
+    targetMode = false;
+    targetClip = 1;
+    targetClipNew = 1;
     
     
 }
@@ -43,6 +45,7 @@ void GridCell::draw()
             ofNoFill();
             ofSetColor(0);
             ofEllipse(centerPos, w, w);
+            ofDrawBitmapString(ofToString(targetClip), centerPos);
             break;
         case 2:
             ofSetColor(255,0,0);
@@ -58,7 +61,15 @@ void GridCell::draw()
     {
         ofSetColor(255,128,0,128);
         ofFill();
-        ofEllipse(centerPos, 100, 100);
+        ofPushMatrix();
+        ofTranslate(centerPos);
+        ofEllipse(0,0, 100, 100);
+        ofRotateZ(targetModeAngle);
+        ofSetColor(255);
+        ofLine(0,0,0,-50);
+        ofDrawBitmapString(ofToString(targetClip), 0,0);
+        ofPopMatrix();
+        //ofEllipse(currMouse, 20, 20);
     }
         
 
@@ -70,7 +81,7 @@ string GridCell::trigger()
 {
     
     //string message = "/layer"+ofToString(layer+1)+"/clip1/connect";
-    string message = "/layer"+ofToString(layer+1)+"/clip"+ofToString(clip+1)+"/connect";
+    string message = "/layer"+ofToString(layer+1)+"/clip"+ofToString(targetClip)+"/connect";
     
     hasTriggered = true;
     switch(mode)
@@ -95,9 +106,9 @@ string GridCell::trigger()
     }
 }
 
-bool GridCell::mouseOver(float x, float y)
+bool GridCell::mouseOver(ofVec2f posRelease)
 {
-    if(x > pos.x && x < pos.x + w && y > pos.y && y < pos.y + w)
+    if(posRelease.x - pos.x < w && posRelease.x - pos.x > 0 && posRelease.y - pos.y < w && posRelease.y - pos.y > 0)
         return true;
     else
         return false;

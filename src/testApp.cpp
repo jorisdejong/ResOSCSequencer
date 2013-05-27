@@ -8,6 +8,8 @@ void testApp::setup(){
     ofEnableSmoothing();
     ofEnableAlphaBlending();
     
+    mouseDown = false;
+    
     //OSC setup
     sender.setup("localhost", 7000);
     receiver.setup(7001);
@@ -77,6 +79,26 @@ void testApp::update(){
         
     }
     
+    //check for button held time, and initiate target popup if necessary
+    if ( ofGetElapsedTimeMillis() -  mouseStartMillis > 250 && mouseDown )
+    {
+        for(int i = 0; i < cells.size(); i++)
+        {
+            if(cells[i].mouseOver(mouseStart))
+            {
+                cells[i].targetMode = true;
+                
+                float angle = -(mouseRelease-cells[i].centerPos).angle(ofVec2f(0,1))-180;
+                cells[i].targetModeAngle = angle;
+                
+                int targetClip = 9 + ((angle/360) * 8);
+                cells[i].targetClip = targetClip;
+                cells[i].targetClipNew = targetClip;
+                
+            }
+        }
+    }
+    
     //check for incoming OSC messages
     while(receiver.hasWaitingMessages())
     {
@@ -143,55 +165,52 @@ void testApp::mouseMoved(int x, int y){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-
+    mouseRelease.set(x,y);
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    mouseStartX = x;
-    mouseStartY = y;
+    mouseDown = true;
+    mouseStart.set(x,y);
     mouseStartMillis = ofGetElapsedTimeMillis();
+    //cout << mouseStartMillis << "...." << mouseEndMillis << endl;
+
 
 
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    float mouseEndMillis = ofGetElapsedTimeMillis();
+    mouseDown = false;
+    mouseEndMillis = ofGetElapsedTimeMillis();
+    mouseRelease.set(x,y);
     
     for(int i = 0; i < cells.size(); i++)
     {
-        if(cells[i].targetMode)
+        
+        //if we were over a button when we started the mouse action
+        if(cells[i].mouseOver(mouseStart))
         {
-            ofVec2f mouseRelease(x,y);
-            float angle = cells[i].centerPos.angle(mouseRelease);
             cells[i].targetMode = false;
-            cout<<angle<<endl;
-        }
-        
-        else
-    
-        {
-            if( mouseEndMillis - mouseStartMillis > 1000)
+            
+            if (cells[i].mode == 0) 
             {
-                if(cells[i].mouseOver(mouseStartX, mouseStartY))
-                {
-                    cells[i].targetMode = true;
-                }
+                cells[i].mode = 1;
+            }
+            else
+                cells[i].mode = 0;
+            
+            //change the targetClip for all clips on that layer
+            for(int j = 0; j < cells.size(); j++)
+            {
+                if(cells[j].layer == cells[i].layer && cells[j].mode == 0)
+                    cells[j].targetClip = cells[i].targetClip;
+            }
+            
+            
+        }
 
-            }
         
-    
-            if(cells[i].mouseOver(mouseStartX, mouseStartY))
-            {
-                if (cells[i].mode == 0) 
-                {
-                    cells[i].mode = 1;
-                }
-                else
-                    cells[i].mode = 0;
-            }
-        }
     }
     
     //else

@@ -32,9 +32,12 @@ class testApp : public ofBaseApp{
     float syncTimeMillis;
     float lastBpmChangeMillis;
     
-    int mouseStartX;
-    int mouseStartY;
+
+    bool mouseDown;
     float mouseStartMillis;
+    float mouseEndMillis;
+    ofVec2f mouseStart;
+    ofVec2f mouseRelease;
     
     ofxOscMessage m;
     ofxOscSender sender;
