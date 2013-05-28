@@ -21,6 +21,7 @@
 		0E7A02AA16D2C73900839901 /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E7A029A16D2C73900839901 /* ofxOscMessage.cpp */; };
 		0E7A02AB16D2C73900839901 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E7A029C16D2C73900839901 /* ofxOscReceiver.cpp */; };
 		0E7A02AC16D2C73900839901 /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0E7A029E16D2C73900839901 /* ofxOscSender.cpp */; };
+		0EE4FF5A1754E8DE00D12E0B /* BPMController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EE4FF591754E8DE00D12E0B /* BPMController.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -109,6 +110,8 @@
 		0E7A029D16D2C73900839901 /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		0E7A029E16D2C73900839901 /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		0E7A029F16D2C73900839901 /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
+		0EE4FF581754E63000D12E0B /* BPMController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPMController.h; sourceTree = "<group>"; };
+		0EE4FF591754E8DE00D12E0B /* BPMController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BPMController.cpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -340,8 +343,10 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
-				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
+				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
+				0EE4FF581754E63000D12E0B /* BPMController.h */,
+				0EE4FF591754E8DE00D12E0B /* BPMController.cpp */,
 				0E7A022D16D2A37500839901 /* GridCell.h */,
 				0E7A022E16D2A45100839901 /* GridCell.cpp */,
 			);
@@ -460,6 +465,7 @@
 				0E7A02AA16D2C73900839901 /* ofxOscMessage.cpp in Sources */,
 				0E7A02AB16D2C73900839901 /* ofxOscReceiver.cpp in Sources */,
 				0E7A02AC16D2C73900839901 /* ofxOscSender.cpp in Sources */,
+				0EE4FF5A1754E8DE00D12E0B /* BPMController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

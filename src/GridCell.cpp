@@ -21,7 +21,6 @@ GridCell::GridCell(ofVec2f pos_, int w_, int x, int y)
     mode = 0;
     targetMode = false;
     targetClip = 1;
-    targetClipNew = 1;
     
     
 }
@@ -91,7 +90,7 @@ string GridCell::trigger()
             break;
             
         case 1:
-            cout << "start " + message << endl;
+            cout << "trigger " + message << endl;
             return message;
             break;        
             

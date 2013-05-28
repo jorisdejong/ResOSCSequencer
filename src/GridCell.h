@@ -44,7 +44,6 @@ public:
     bool targetMode;
     float targetModeAngle;
     int targetClip;
-    int targetClipNew;
     
     ofVec2f currMouse;
 };

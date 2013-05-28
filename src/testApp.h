@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "GridCell.h"
+#include "BPMController.h"
 
 class testApp : public ofBaseApp{
 	public:
@@ -21,14 +22,16 @@ class testApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     vector <GridCell> cells;
+    BPMController *bpmController;
+    
     int cellNum;
     int cellWidth;
     int rowLength;
+    int gridStartHeight;
+    int layers;
     
-    float metronome;
-    float bpm;
-    int currentBeat;
-    int numberOfBeats;
+    float playhead;
+    int currentPlayheadPositionX;
     float syncTimeMillis;
     float lastBpmChangeMillis;
     
