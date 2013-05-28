@@ -83,6 +83,7 @@ string GridCell::trigger()
     string message = "/layer"+ofToString(layer+1)+"/clip"+ofToString(targetClip)+"/connect";
     
     hasTriggered = true;
+    
     switch(mode)
     {
         case 0:

@@ -32,12 +32,12 @@ int BPMController::getBeat()
     return numberOfBeats;    
 }
 
-int BPMController::getBpm()
+float BPMController::getBpm()
 {
     return bpm;
 }
 
-void BPMController::setBpm(int bpm_)
+void BPMController::setBpm(float bpm_)
 {
     bpm = bpm_;
 }
@@ -76,6 +76,14 @@ void BPMController::draw()
 bool BPMController::mouseOverTapper(ofVec2f pos)
 {
     if(pos.x > tapper.x && pos.x < tapper.z + tapper.x && pos.y > tapper.y && pos.y < tapper.y + tapper.w)
+        return true;
+    else
+        return false;
+}
+
+bool BPMController::mouseOverPitcher(ofVec2f pos)
+{
+    if(pos.x > pitcher.x && pos.x < pitcher.z + pitcher.x && pos.y > pitcher.y && pos.y < pitcher.y + pitcher.w)
         return true;
     else
         return false;

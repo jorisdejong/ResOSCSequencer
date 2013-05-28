@@ -15,7 +15,7 @@ class BPMController
 {
 public: 
     //vars
-    int bpm;
+    float bpm;
     int fourBeat;
     float syncTimeMillis;
     int tapCount;
@@ -31,9 +31,9 @@ public:
     void update();
     void draw();
     
-    int getBpm();
+    float getBpm();
     int getBeat();
-    void setBpm (int bpm);
+    void setBpm (float bpm);
     void tap();
     void sync();
     void changeSpeed(float amount);

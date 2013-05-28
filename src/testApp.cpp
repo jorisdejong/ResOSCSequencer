@@ -15,7 +15,7 @@ void testApp::setup(){
     receiver.setup(7001);
     
     //create cellgrid;
-    layers = 3;
+    layers = 5;
     cellWidth = 50;
     rowLength = 16;
     cellNum = layers * rowLength;
@@ -45,12 +45,13 @@ void testApp::setup(){
 void testApp::update(){
     
     bpmController->update();
+    
     //set beat and playhead based on current BPM
-      
     playhead = (bpmController->getBeat() % rowLength);
     currentPlayheadPositionX = playhead * (cellWidth + 10) + 10;
     
     //if we've gone a full loop of the sequencer
+    //todo this still doesn't work correctly for the first beat
     if ( playhead == 0 )
     {
         //re-arm all the cells
@@ -61,7 +62,7 @@ void testApp::update(){
     //check if the playhead has triggered an event
     for(int i = 0; i < cells.size(); i++)
     {
-        if ( currentPlayheadPositionX == cells[i].pos.x && cells[i].hasTriggered == false )
+        if ( playhead == cells[i].clip && cells[i].hasTriggered == false )
         {
             string message;
             message = cells[i].trigger();
@@ -71,11 +72,13 @@ void testApp::update(){
                 m.setAddress(message);
                 m.addIntArg(1);
                 sender.sendMessage ( m );
+                m.clear();
+                
             }
         }
     }
     
-    //check for button held time, and initiate target popup if necessary
+    //check for button held time, and initiate target popup if we were over a button
     if ( ofGetElapsedTimeMillis() -  mouseStartMillis > 250 && mouseDown )
     {
         for(int i = 0; i < cells.size(); i++)
@@ -93,7 +96,12 @@ void testApp::update(){
         }
     }
     
-    //check for BPM controller
+    //if we were over the pitcher when we started the mouse action
+    if(bpmController->mouseOverPitcher(mouseStart) && mouseDown)
+    {
+        float amount = ( mouseRelease.x - mouseStart.x ) / 1000;
+        bpmController->changeSpeed(amount);
+    }
     
     //check for incoming OSC messages
     while(receiver.hasWaitingMessages())
@@ -130,8 +138,6 @@ void testApp::draw(){
     ofFill();
     ofRectRounded(currentPlayheadPositionX, gridStartHeight + (( cellWidth+10 )* layers), cellWidth, cellWidth, 10);
     
-    
-    
     bpmController->draw();
     
     ofDrawBitmapString(ofToString(bpmController->getBpm()), 10,10);
@@ -163,6 +169,7 @@ void testApp::mouseDragged(int x, int y, int button){
 void testApp::mousePressed(int x, int y, int button){
     mouseDown = true;
     mouseStart.set(x,y);
+    mouseRelease = mouseStart;
     mouseStartMillis = ofGetElapsedTimeMillis();
     
     if(bpmController->mouseOverTapper(mouseStart))
@@ -178,22 +185,24 @@ void testApp::mouseReleased(int x, int y, int button){
     mouseEndMillis = ofGetElapsedTimeMillis();
     mouseRelease.set(x,y);
     
+    //if we were over a button when we started the mouse action
     for(int i = 0; i < cells.size(); i++)
     {
-        
-        //if we were over a button when we started the mouse action
         if(cells[i].mouseOver(mouseStart))
         {
-            cells[i].targetMode = false;
-            
-            if (cells[i].mode == 0) 
-            {
+            //change the cell mode
+            if (cells[i].mode == 0)
                 cells[i].mode = 1;
-            }
-            else
+            else if(!cells[i].targetMode)
                 cells[i].mode = 0;
             
+                //turn off targetMode
+            cells[i].targetMode = false;
+            
+
+            
             //change the targetClip for all clips on that layer
+            //todo: needs something like a nextTargetClip, because now disarming and rearming a trigger fucks with the logic
             for(int j = 0; j < cells.size(); j++)
             {
                 if(cells[j].layer == cells[i].layer && cells[j].mode == 0)
@@ -202,7 +211,7 @@ void testApp::mouseReleased(int x, int y, int button){
         }
     }
     
-    //else
+
     
 
 }
