@@ -103,6 +103,16 @@ void testApp::update(){
         bpmController->changeSpeed(amount);
     }
     
+    if(bpmController->mouseOverPuller(mouseStart) && mouseDown)
+    {
+        bpmController->pull();
+    }
+    
+    if(bpmController->mouseOverPusher(mouseStart) && mouseDown)
+    {
+        bpmController->push();
+    }
+    
     //check for incoming OSC messages
     while(receiver.hasWaitingMessages())
     {

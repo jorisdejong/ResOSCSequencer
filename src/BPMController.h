@@ -17,12 +17,18 @@ public:
     //vars
     float bpm;
     int fourBeat;
+    int numberOfBeats;
     float syncTimeMillis;
+    float lastUpdateTimeMillis;
+    int lastUpdateTimeBeats;
+    float offsetMillis;
     int tapCount;
     float bpmMillis;
     
     ofVec4f tapper;
     ofVec4f pitcher;
+    ofVec4f puller;
+    ofVec4f pusher;
     
     //constructor
     BPMController(int y);
@@ -42,6 +48,8 @@ public:
     
     bool mouseOverTapper(ofVec2f pos);
     bool mouseOverPitcher(ofVec2f pos);
+    bool mouseOverPuller(ofVec2f pos);
+    bool mouseOverPusher(ofVec2f pos);
     
     float firstTap;
     float lastTap;
